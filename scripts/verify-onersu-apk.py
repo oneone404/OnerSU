@@ -29,10 +29,11 @@ with zipfile.ZipFile(apk) as bundle:
     shim = bundle.read("assets/ksud")
     assert b"PATH=/system/bin:/system/xbin" in shim, "Bootstrap must use system tools"
     assert b"\r" not in shim, "Bootstrap must have Unix line endings"
-    for placeholder in (b"@KSUD@", b"@APK@", b"@READY@", b"@RUN_ID@"):
+    for placeholder in (b"@KSUD@", b"@APK@", b"@READY@", b"@REGISTERED@", b"@RUN_ID@"):
         assert placeholder in shim
     assert b"am force-stop com.onersu.onersu" in shim
-    assert b"com.onersu.onersu/org.bakasu.bakasu.ui.MainActivity" in shim
+    assert b"com.onersu.onersu/org.bakasu.bakasu.ui.DfRootActivity" in shim
+    assert b"***FAILED***: check logs" not in native, "Old timeout incorrectly reports root failure"
     dex = b"".join(bundle.read(name) for name in names if name.endswith(".dex"))
     assert b"Ldf/root/ExploitRunner;" in dex and b"Ldf/root/IReporter;" in dex
     official_signature = f"size: 0x{certificate_size:x}, hash: {certificate_sha256}".encode()

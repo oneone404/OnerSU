@@ -4,11 +4,18 @@
     <string name="oner_root_description">DFRoot được tích hợp trong OnerSU. Root tạm mất sau khi khởi động lại hoàn toàn. Bản này dành cho PME110, ROM 16.0.9.402.</string>
     <string name="oner_root_ready">Sẵn sàng chạy</string>
     <string name="oner_root_running">Đang root và khôi phục các thay đổi tạm…</string>
-    <string name="oner_root_completed">Đã dọn dẹp xong. OnerSU sẽ mở lại khi bộ root sẵn sàng.</string>
+    <string name="oner_root_completed">Root thành công. Đã đăng ký manager và khôi phục các thay đổi tạm.</string>
     <string name="oner_root_failed">Lần chạy chưa thành công. Xem nhật ký bên dưới.</string>
-    <string name="oner_root_loaded">Root đã được nạp trong phiên này.</string>
+    <string name="oner_root_loaded">Root đang hoạt động. OnerSU đã xác nhận quyền manager với driver.</string>
     <string name="oner_root_unsupported">Máy hoặc ROM nằm ngoài cấu hình PME110 đã kiểm tra.</string>
     <string name="oner_root_run">Chạy DFRoot</string>
     <string name="oner_root_log">Nhật ký chạy</string>
     <string name="oner_root_back">Quay lại</string>
+    <string name="oner_root_verifying">Đã khôi phục xong. Đang xác nhận root và đăng ký manager…</string>
+    <string name="oner_root_unconfirmed">Chưa xác nhận được root và đăng ký manager. Xem nhật ký phía trên.</string>
+    <string name="oner_root_manager_unavailable">Driver root đã nạp, nhưng OnerSU chưa sẵn sàng quản lý.</string>
+    <string name="oner_root_attempted">Đã kích hoạt một lần root trong phiên khởi động này. Chưa xác nhận được root; cần khởi động lại toàn bộ trước khi thử lại.</string>
+    <string name="oner_root_restart_hint">Khởi động lại phần mềm nạp lại Android và các script module, giữ root tạm. Các app đang mở sẽ đóng.</string>
+    <string name="oner_root_restarting">Đang khởi động lại Android…</string>
+    <string name="oner_root_restart_failed">Không khởi chạy được thao tác khởi động lại phần mềm. Hãy thử từ trang chính.</string>
 </resources>

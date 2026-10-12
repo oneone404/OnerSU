@@ -2,7 +2,7 @@
 
 **Một APK chứa manager ReSukiSU/BakaSU và mã nguồn DFRoot**, với nút **Root bằng DFRoot** ngay trên trang chính. Tên hiển thị là **OnerSU**.
 
-## Phạm vi bản 0.1.2
+## Phạm vi bản 0.1.3
 
 - Hồ sơ root: **OPPO PME110**, Android 16, ROM **16.0.9.402(CN01)**, kernel `android16-6.12`.
 - Kiểm tra model, API, ABI và fingerprint trước khi cho chạy. Máy/ROM khác chỉ dùng được các chức năng manager tương thích; nút root bị khóa.
@@ -12,7 +12,9 @@
 
 ## Dùng
 
-Mở OnerSU → **Root bằng DFRoot** → **Chạy DFRoot**. Theo dõi nhật ký. Manager sẽ mở lại sau khi DFRoot kết thúc bước khôi phục và bộ root đăng ký APK xong. Root dùng khai thác kernel, có thể làm máy treo hoặc khởi động lại; không mở lại/chạy lại trong khi thao tác còn đang diễn ra.
+Mở OnerSU → **Root bằng DFRoot** → **Chạy DFRoot**. Theo dõi nhật ký. Sau bước khôi phục và đăng ký APK, OnerSU mở lại màn hình nhật ký với nút **Khởi động lại phần mềm** ở góc dưới. Bấm nút này để nạp lại Android và script module như ReZygisk/HMA, giữ root tạm; các app đang mở sẽ đóng. Root dùng khai thác kernel, có thể làm máy treo hoặc khởi động lại; không mở lại/chạy lại trong khi thao tác còn đang diễn ra.
+
+Bản 0.1.3 xác nhận kết quả đăng ký manager bằng token của đúng lần chạy sau khi cleanup hoàn tất. Hết thời gian chờ native 5 giây chỉ báo đang chờ xác nhận, không tự kết luận root thất bại. Một hook đã kích hoạt hoặc driver chưa cấp quyền manager cũng không được báo là root sẵn sàng. Nút soft restart chỉ hiện khi manager có quyền với driver và UAPI khớp; không tự reboot.
 
 Ứng dụng dùng package riêng **`com.onersu.onersu`** và khóa ký riêng của OnerSU. Module bootstrap đã được build lại từ nguồn với đường dẫn mới, nên không cần cài DFRoot riêng. Namespace Java/JNI kế thừa được giữ để tương thích nội bộ; chúng không phải package ứng dụng đã cài. OnerSU không thay thế package AgnesSU; việc chuyển sang backend BakaSU cần thực hiện trong một phiên khởi động sạch.
 

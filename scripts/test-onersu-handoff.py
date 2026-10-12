@@ -29,15 +29,19 @@ def wait_for(predicate, seconds=5):
 
 with tempfile.TemporaryDirectory(prefix="onersu-handoff-") as tmp:
     folder = Path(tmp)
-    ready, calls = folder / "ready", folder / "calls"
+    ready, calls, registered = folder / "ready", folder / "calls", folder / "registered"
     ksud, apk, am = folder / "ksud", folder / "app.apk", folder / "am"
     ksud.write_text(
         '#!/bin/sh\n'
         'printf "%s\\n" "$*" >> "$TEST_CALLS"\n'
         '[ "$1" = late-load ] && exit "${TEST_LATE_FAIL:-0}"\n'
+        '[ "${TEST_REGISTER_FAIL:-0}" = 1 ] && exit 1\n'
         '[ -f "$TEST_DRIVER_READY" ]\n', encoding="utf-8", newline="\n")
     am.write_text('#!/bin/sh\nprintf "am %s\\n" "$*" >> "$TEST_CALLS"\n',
                   encoding="utf-8", newline="\n")
+    chmod = folder / "chmod"
+    chmod.write_text('#!/bin/sh\n[ "$1" = 644 ] && [ -s "$2" ]\n',
+                     encoding="utf-8", newline="\n")
     sleeper = folder / "sleep"
     sleeper.write_text('#!/bin/sh\n"$TEST_PYTHON" -c "import time; time.sleep(float(__import__(\'sys\').argv[1]))" "$1"\n',
                        encoding="utf-8", newline="\n")
@@ -47,7 +51,7 @@ with tempfile.TemporaryDirectory(prefix="onersu-handoff-") as tmp:
     # This PC fixture supplies mock commands instead of Android's system tools.
     script = script.replace("PATH=/system/bin:/system/xbin", "# Use fixture PATH")
     for key, value in {"KSUD": ksud.as_posix(), "APK": apk.as_posix(),
-                       "READY": ready.as_posix(), "RUN_ID": "fresh-run"}.items():
+                       "READY": ready.as_posix(), "REGISTERED": registered.as_posix(), "RUN_ID": "fresh-run"}.items():
         script = script.replace("@" + key + "@", quote(value))
     launcher = folder / "bootstrap"
     launcher.write_text(script, encoding="utf-8", newline="\n")
@@ -55,24 +59,37 @@ with tempfile.TemporaryDirectory(prefix="onersu-handoff-") as tmp:
     env.update(TEST_CALLS=calls.as_posix(), TEST_DRIVER_READY=(folder / "driver-ready").as_posix())
     env["TEST_PYTHON"] = Path(sys.executable).as_posix()
     env["PATH"] = folder.as_posix() + os.pathsep + str(Path(SH).parent) + os.pathsep + env["PATH"]
-    for executable in (ksud, am, sleeper):
+    for executable in (ksud, am, sleeper, chmod):
         executable.chmod(0o755)
     ready.write_text("old-run")
+    registered.write_text("old-run")
     process = subprocess.Popen([SH, launcher.as_posix()], env=env)
     wait_for(lambda: calls.exists())
     time.sleep(0.2)
     assert process.poll() is None, "Must wait until driver registration succeeds"
+    assert registered.read_text() == "old-run", "Must not confirm registration before driver responds"
     (folder / "driver-ready").write_text("ready")
     assert process.wait(timeout=5) == 0
+    assert registered.read_text() == "fresh-run", "Registration must be bound to the current attempt"
     time.sleep(0.25)
     assert "am " not in calls.read_text(), "A stale cleanup token must not restart the app"
     ready.write_text("fresh-run")
     wait_for(lambda: "am start" in calls.read_text())
     text = calls.read_text()
     assert "late-load --kmi android16-6.12 --package-name com.onersu.onersu.bootstrap" in text
-    assert "am force-stop com.onersu.onersu\nam start -n com.onersu.onersu/org.bakasu.bakasu.ui.MainActivity" in text
+    assert "am force-stop com.onersu.onersu\nam start -n com.onersu.onersu/org.bakasu.bakasu.ui.DfRootActivity" in text
     calls.write_text("")
+    registered.unlink()
     env["TEST_LATE_FAIL"] = "1"
     assert subprocess.run([SH, launcher.as_posix()], env=env).returncode == 1
     assert "am " not in calls.read_text(), "Failed late-load must not restart"
-    print("PASS: waits for backend, rejects stale token, restarts after cleanup, stops on failure")
+    assert not registered.exists(), "Failed late-load must not confirm root"
+    calls.write_text("")
+    env["TEST_LATE_FAIL"] = "0"
+    env["TEST_REGISTER_FAIL"] = "1"
+    launcher.write_text(script.replace('while [ "$n" -lt 100 ]', 'while [ "$n" -lt 3 ]'),
+                        encoding="utf-8", newline="\n")
+    assert subprocess.run([SH, launcher.as_posix()], env=env).returncode == 1
+    assert not registered.exists(), "A rejected manager must not confirm root"
+    assert "am " not in calls.read_text(), "A rejected manager must not restart"
+    print("PASS: waits for registration, records fresh evidence, rejects stale token, reopens log after cleanup, stops on failure")

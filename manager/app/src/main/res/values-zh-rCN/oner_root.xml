@@ -4,11 +4,18 @@
     <string name="oner_root_description">DFRoot 已集成到 OnerSU。完整重启后临时 Root 会失效。此版本适用于 PME110 16.0.9.402。</string>
     <string name="oner_root_ready">准备就绪</string>
     <string name="oner_root_running">正在获取 Root 并恢复临时修改…</string>
-    <string name="oner_root_completed">清理已完成。Root 后端就绪后 OnerSU 将重新打开。</string>
+    <string name="oner_root_completed">Root 成功，管理器注册和临时修改恢复已完成。</string>
     <string name="oner_root_failed">操作未成功完成，请查看下方日志。</string>
-    <string name="oner_root_loaded">当前会话已加载 Root。</string>
+    <string name="oner_root_loaded">Root 正在运行，OnerSU 已确认对驱动的管理权限。</string>
     <string name="oner_root_unsupported">设备或固件不在已测试的 PME110 配置范围内。</string>
     <string name="oner_root_run">运行 DFRoot</string>
     <string name="oner_root_log">运行日志</string>
     <string name="oner_root_back">返回</string>
+    <string name="oner_root_verifying">恢复已完成，正在确认 Root 和管理器注册…</string>
+    <string name="oner_root_unconfirmed">无法确认 Root 和管理器注册，请查看上方日志。</string>
+    <string name="oner_root_manager_unavailable">Root 驱动已加载，但 OnerSU 尚未准备好管理它。</string>
+    <string name="oner_root_attempted">本次启动已触发过 Root 操作，但尚未确认成功。请完整重启后再试。</string>
+    <string name="oner_root_restart_hint">软重启会重新加载 Android 和模块启动脚本，并保留临时 Root。已打开的应用将关闭。</string>
+    <string name="oner_root_restarting">正在重启 Android…</string>
+    <string name="oner_root_restart_failed">无法启动软重启，请从主页重试。</string>
 </resources>

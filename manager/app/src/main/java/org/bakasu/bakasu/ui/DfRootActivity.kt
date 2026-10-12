@@ -1,6 +1,7 @@
 package org.bakasu.bakasu.ui
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,6 +21,13 @@ class DfRootActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent { KernelSUTheme { DfRootScreen(onBack = { finish() }) } }
+        setContent {
+            KernelSUTheme {
+                DfRootScreen(onBack = {
+                    startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                    finish()
+                })
+            }
+        }
     }
 }

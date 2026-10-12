@@ -10,6 +10,7 @@ export PATH
 KSUD=@KSUD@
 APK=@APK@
 READY=@READY@
+REGISTERED=@REGISTERED@
 RUN_ID=@RUN_ID@
 [ -f "$KSUD" ] && [ -f "$APK" ] || exit 1
 "$KSUD" late-load --kmi android16-6.12 --package-name com.onersu.onersu.bootstrap || exit 1
@@ -26,6 +27,9 @@ while [ "$n" -lt 100 ]; do
     sleep 0.1
 done
 [ "$registered" -eq 1 ] || exit 1
+# Record successful driver registration for this run, not just shim exit status.
+printf '%s' "$RUN_ID" > "$REGISTERED" || exit 1
+chmod 644 "$REGISTERED" || exit 1
 # The Java runner signals ONLY after nativeRunAll has returned from cleanup.
 # Restart then, so the new manager process receives its KernelSU driver fd.
 (
@@ -33,7 +37,7 @@ done
     while [ "$n" -lt 600 ]; do
         if [ -f "$READY" ] && [ "$(cat "$READY" 2>/dev/null)" = "$RUN_ID" ]; then
             am force-stop com.onersu.onersu
-            am start -n com.onersu.onersu/org.bakasu.bakasu.ui.MainActivity
+            am start -n com.onersu.onersu/org.bakasu.bakasu.ui.DfRootActivity
             exit
         fi
         n=$((n + 1))

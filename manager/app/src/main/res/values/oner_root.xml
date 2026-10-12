@@ -4,11 +4,18 @@
     <string name="oner_root_description">DFRoot is built into OnerSU. Temporary root ends after a full reboot. This build is for PME110 firmware 16.0.9.402.</string>
     <string name="oner_root_ready">Ready to start</string>
     <string name="oner_root_running">Rooting and restoring temporary patches…</string>
-    <string name="oner_root_completed">Cleanup finished. OnerSU will reopen when the root backend is ready.</string>
+    <string name="oner_root_completed">Root succeeded. Manager registration and cleanup are complete.</string>
     <string name="oner_root_failed">The attempt did not finish successfully. Read the log below.</string>
-    <string name="oner_root_loaded">Root is already loaded in this session.</string>
+    <string name="oner_root_loaded">Root is active. OnerSU has confirmed manager access to the driver.</string>
     <string name="oner_root_unsupported">This device or firmware is outside the tested PME110 profile.</string>
     <string name="oner_root_run">Run DFRoot</string>
     <string name="oner_root_log">Run log</string>
     <string name="oner_root_back">Back</string>
+    <string name="oner_root_verifying">Cleanup finished. Confirming root and manager registration…</string>
+    <string name="oner_root_unconfirmed">Root and manager registration could not be confirmed. Read the log above.</string>
+    <string name="oner_root_manager_unavailable">The root driver is loaded, but OnerSU is not ready to manage it.</string>
+    <string name="oner_root_attempted">A root attempt has already triggered in this boot. Root is not confirmed; fully reboot before trying again.</string>
+    <string name="oner_root_restart_hint">Soft restart reloads Android and module startup scripts while keeping temporary root. Open apps will close.</string>
+    <string name="oner_root_restarting">Restarting Android…</string>
+    <string name="oner_root_restart_failed">Could not start the soft restart. Try again from the home page.</string>
 </resources>

@@ -559,7 +559,7 @@ Java_df_root_ExploitRunner_nativeRunAll(JNIEnv *env, jclass clz __attribute__((u
         int         rc;
     } markers[] = {
         { "/dev/df",   "libc++: mutex acquired, loading custom module", -1 },
-        { "/dev/dfm0", "***SUCCESS***",                        0 },
+        { "/dev/dfm0", "* backend registered; restoring temporary patches", 0 },
         { "/dev/dfm1", "***FAILED***: ksud exited with error", 1 },
     };
     int seen[sizeof(markers)/sizeof(markers[0])] = {0};
@@ -577,7 +577,7 @@ Java_df_root_ExploitRunner_nativeRunAll(JNIEnv *env, jclass clz __attribute__((u
             }
         }
     }
-    REPORTLN("***FAILED***: check logs");
+    REPORTLN("* backend confirmation pending; restoring patches before checking registration");
 done:
     if (rc == 3) REPORTLN("***FAILED***: failed to patch files");
     REPORTLN("\n=== cleanup ===");
