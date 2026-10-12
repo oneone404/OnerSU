@@ -1,4 +1,19 @@
-# OnerSU 0.1.2 build and device validation
+# OnerSU build and device validation
+
+## 0.1.5 OPPO installer policy
+
+Date: 2026-10-12. APK source commit `56fb08c`, version code 40010.
+
+- Added the first row in Settings → App settings, using the existing settings widget, repository/use-case/ViewModel and Koin conventions. Resources are provided in English, Vietnamese and Simplified Chinese.
+- The preference records intent. Native manager access plus an actual root shell are required to apply it. The displayed `Blocked` result requires verified package `disabled-user` and disabled `InstallStart`, with a saved baseline for the current Android user. No alternative installer is required.
+- Reconciles on manager initialization/root-screen resume and settings resume. A root-owned boot-completed hook applies the policy at boot completion and again after 5 and 25 seconds, then exits. Disabling removes the hook before restoration; a failed restoration retains its snapshot for retry. Disabling without root records a pending restoration.
+- Device validation of the final current-user script: only user 0 was snapshotted and modified. Users 11 and 999 retained their existing states and no explicit InstallStart overrides were added for them. Disabling restored user 0 to its saved `installed=true`, package default, component default state; the boot hook was absent afterwards.
+- One actual Android soft restart verified the shared boot hook and all three bounded passes before the scope was narrowed from all users to the current user. The kernel boot ID was unchanged, root remained available and SELinux remained Enforcing. The APK intent query excluded the stock OPPO installer. No additional restart was performed after narrowing; the final selection/restore logic was tested directly on the running phone.
+- Final `spotlessCheck`, `assembleRelease`, `lintRelease`: pass; 0 lint errors and 56 inherited warnings. Signed-package verification passes, including byte-for-byte comparison of the shipped installer policy asset with its source.
+- Signed APK: `OnerSU_0.1.5_40010-arm64-v8a-release.apk`; SHA-256 `1483083e03e4d2a1ef632622ef36f1714eb1a4701a813221896b95c8e58d362e`. V2-only, same 971-byte certificate and pinned root backend as 0.1.4.
+- No new root exploit or full device reboot was run. The new manager APK was not installed during this verification pass; delivery is via the existing stable online updater. The device test policy was disabled and its baseline restored at the end. Full reboot still loses temporary root; arbitrary later OEM state changes are handled on the next reconciliation, not by a permanent background watcher.
+
+## Historical 0.1.2 validation
 
 Date: 2026-10-12. Java 21, NDK 30.0.16248370, Android compile SDK 37, build tools 36.1.0.
 
