@@ -256,7 +256,7 @@ private fun StatusCard() {
                         painter = rememberDrawablePainter(
                             drawable = ContextCompat.getDrawable(
                                 LocalContext.current,
-                                R.mipmap.ic_launcher,
+                                R.mipmap.ic_onersu,
                             ),
                         ),
                         contentDescription = stringResource(id = R.string.app_name),

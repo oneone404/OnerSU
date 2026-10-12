@@ -111,7 +111,7 @@ class Shortcut(
         Log.d(TAG, "$logPrefix: shortcutId=$shortcutId, hasPinned=$hasPinned")
 
         val iconCompat = createShortcutIcon(context, iconUri)
-        val finalIcon = iconCompat ?: IconCompat.createWithResource(context, R.mipmap.ic_launcher)
+        val finalIcon = iconCompat ?: IconCompat.createWithResource(context, R.mipmap.ic_onersu)
 
         val shortcut = ShortcutInfoCompat.Builder(context, shortcutId)
             .setShortLabel(name)

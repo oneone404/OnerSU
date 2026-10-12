@@ -300,22 +300,8 @@ int find_hook_target(const char *lib, const char *sym,
 
 __asm__(
     ".section .rodata\n"
-    ".global dirtyfrag_ko_12_5_10_start\n.global dirtyfrag_ko_12_5_10_end\n"
-    "dirtyfrag_ko_12_5_10_start:\n.incbin \"" DFROOT_SOURCE_DIR "/ko/dirtyfrag-android12-5.10.ko\"\ndirtyfrag_ko_12_5_10_end:\n"
-    ".global dirtyfrag_ko_13_5_10_start\n.global dirtyfrag_ko_13_5_10_end\n"
-    "dirtyfrag_ko_13_5_10_start:\n.incbin \"" DFROOT_SOURCE_DIR "/ko/dirtyfrag-android13-5.10.ko\"\ndirtyfrag_ko_13_5_10_end:\n"
-    ".global dirtyfrag_ko_13_5_15_start\n.global dirtyfrag_ko_13_5_15_end\n"
-    "dirtyfrag_ko_13_5_15_start:\n.incbin \"" DFROOT_SOURCE_DIR "/ko/dirtyfrag-android13-5.15.ko\"\ndirtyfrag_ko_13_5_15_end:\n"
-    ".global dirtyfrag_ko_14_5_15_start\n.global dirtyfrag_ko_14_5_15_end\n"
-    "dirtyfrag_ko_14_5_15_start:\n.incbin \"" DFROOT_SOURCE_DIR "/ko/dirtyfrag-android14-5.15.ko\"\ndirtyfrag_ko_14_5_15_end:\n"
-    ".global dirtyfrag_ko_14_6_1_start\n.global dirtyfrag_ko_14_6_1_end\n"
-    "dirtyfrag_ko_14_6_1_start:\n.incbin \"" DFROOT_SOURCE_DIR "/ko/dirtyfrag-android14-6.1.ko\"\ndirtyfrag_ko_14_6_1_end:\n"
-    ".global dirtyfrag_ko_15_6_6_start\n.global dirtyfrag_ko_15_6_6_end\n"
-    "dirtyfrag_ko_15_6_6_start:\n.incbin \"" DFROOT_SOURCE_DIR "/ko/dirtyfrag-android15-6.6.ko\"\ndirtyfrag_ko_15_6_6_end:\n"
     ".global dirtyfrag_ko_16_6_12_start\n.global dirtyfrag_ko_16_6_12_end\n"
     "dirtyfrag_ko_16_6_12_start:\n.incbin \"" DFROOT_SOURCE_DIR "/ko/dirtyfrag-android16-6.12.ko\"\ndirtyfrag_ko_16_6_12_end:\n"
-    ".global dirtyfrag_ko_17_6_18_start\n.global dirtyfrag_ko_17_6_18_end\n"
-    "dirtyfrag_ko_17_6_18_start:\n.incbin \"" DFROOT_SOURCE_DIR "/ko/dirtyfrag-android17-6.18.ko\"\ndirtyfrag_ko_17_6_18_end:\n"
 );
 
 __asm__(
@@ -324,36 +310,16 @@ __asm__(
     "splice_helper_start:\n.incbin \"" DFROOT_SOURCE_DIR "/splicehelper\"\nsplice_helper_end:\n"
 );
 
-extern char dirtyfrag_ko_12_5_10_start[], dirtyfrag_ko_12_5_10_end[];
-extern char dirtyfrag_ko_13_5_10_start[], dirtyfrag_ko_13_5_10_end[];
-extern char dirtyfrag_ko_13_5_15_start[], dirtyfrag_ko_13_5_15_end[];
-extern char dirtyfrag_ko_14_5_15_start[], dirtyfrag_ko_14_5_15_end[];
-extern char dirtyfrag_ko_14_6_1_start[],  dirtyfrag_ko_14_6_1_end[];
-extern char dirtyfrag_ko_15_6_6_start[],  dirtyfrag_ko_15_6_6_end[];
 extern char dirtyfrag_ko_16_6_12_start[], dirtyfrag_ko_16_6_12_end[];
-extern char dirtyfrag_ko_17_6_18_start[], dirtyfrag_ko_17_6_18_end[];
 extern char splice_helper_start[], splice_helper_end[];
 
 struct KoImage { int android_release, kver_major, kver_minor; const char *start, *end; };
 
 static const struct KoImage *select_ko_image(int andr, int major, int minor) {
-    static const struct KoImage imgs[] = {
-        {12, 5, 10, dirtyfrag_ko_12_5_10_start, dirtyfrag_ko_12_5_10_end},
-        {13, 5, 10, dirtyfrag_ko_13_5_10_start, dirtyfrag_ko_13_5_10_end},
-        {13, 5, 15, dirtyfrag_ko_13_5_15_start, dirtyfrag_ko_13_5_15_end},
-        {14, 5, 15, dirtyfrag_ko_14_5_15_start, dirtyfrag_ko_14_5_15_end},
-        {14, 6,  1, dirtyfrag_ko_14_6_1_start,  dirtyfrag_ko_14_6_1_end},
-        {15, 6,  6, dirtyfrag_ko_15_6_6_start,  dirtyfrag_ko_15_6_6_end},
-        {16, 6, 12, dirtyfrag_ko_16_6_12_start, dirtyfrag_ko_16_6_12_end},
-        {17, 6, 18, dirtyfrag_ko_17_6_18_start, dirtyfrag_ko_17_6_18_end},
+    static const struct KoImage image = {
+        16, 6, 12, dirtyfrag_ko_16_6_12_start, dirtyfrag_ko_16_6_12_end,
     };
-    const struct KoImage *fb = NULL;
-    for (size_t i = 0; i < sizeof(imgs)/sizeof(imgs[0]); i++) {
-        if (imgs[i].kver_major != major || imgs[i].kver_minor != minor) continue;
-        if (imgs[i].android_release == andr) return &imgs[i];
-        if (!fb) fb = &imgs[i];
-    }
-    return fb;
+    return andr == 16 && major == 6 && minor == 12 ? &image : NULL;
 }
 
 static int read_device_versions(int *andr, int *major, int *minor) {

@@ -15,8 +15,11 @@
 
 - Source: https://github.com/Applying1/DFRootOPLUS
 - Snapshot commit: `7a3ee2b077f963e043fcdf0a9fd04492656a126c`, plus local PME110 patches previously verified in the separate DFRoot APK.
-- Bootstrap `dirtyfrag-android16-6.12.ko` SHA-256: `26cb2f3e0935b66c119f517c6bdf92ac2b5ad957aabc8525994ea6d708050d0d`.
-- KMI module binaries are preserved from that snapshot; corresponding bootstrap C and Makefile are in `dfroot/dirtyfrag-lkm`.
+- Original 0.1.0 bootstrap SHA-256: `26cb2f3e0935b66c119f517c6bdf92ac2b5ad957aabc8525994ea6d708050d0d`.
+- Current 0.1.1 bootstrap SHA-256: `898dda48e11c32f9a74bea00ce1d42f2dc7caa946f25ca8518f2c525411fc94c`.
+- Current module was compiled from `dfroot/dirtyfrag-lkm/dirtyfrag.c` with package path `/data/user_de/0/com.onersu.onersu/ksud`. Build: https://github.com/oneone404/OnerSU/actions/runs/38251557029 at source commit `a4c3743`.
+- DDK image: `ghcr.io/ylarod/ddk-min@sha256:fd3ec5cc71d7f2716212e9df8d5674a9afe68fb769282fcac87b83f207f949ee`.
+- Module vermagic remains `6.12.76-4k SMP preempt mod_unload modversions aarch64`, matching the original bootstrap. Only this android16-6.12 bootstrap is embedded in the APK; other original KMI binaries are retained as reference assets.
 - The helper is rebuilt from `splicehelper.c`; no separate DFRoot APK is included.
 - Native integration changes: CMake subdirectory paths, C23-compatible `__asm__`, absolute binary inclusion paths required for LTO, and separate manager/DFRoot build targets. The root primitive and restoration routines are retained.
 - Java integration adds a shim, a unique per-run cleanup token and manager registration/restart ordering. Soft reboot is disabled for the merged flow.

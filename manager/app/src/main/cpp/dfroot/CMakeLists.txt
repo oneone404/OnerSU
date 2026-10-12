@@ -25,15 +25,7 @@ target_compile_definitions(exp PRIVATE DFROOT_SOURCE_DIR="${CMAKE_CURRENT_SOURCE
 add_dependencies(exp splicehelper_bin)
 
 set_source_files_properties(exp.c PROPERTIES OBJECT_DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/ko/dirtyfrag-android12-5.10.ko;\
-${CMAKE_CURRENT_SOURCE_DIR}/ko/dirtyfrag-android13-5.10.ko;\
-${CMAKE_CURRENT_SOURCE_DIR}/ko/dirtyfrag-android13-5.15.ko;\
-${CMAKE_CURRENT_SOURCE_DIR}/ko/dirtyfrag-android14-5.15.ko;\
-${CMAKE_CURRENT_SOURCE_DIR}/ko/dirtyfrag-android14-6.1.ko;\
-${CMAKE_CURRENT_SOURCE_DIR}/ko/dirtyfrag-android15-6.6.ko;\
-${CMAKE_CURRENT_SOURCE_DIR}/ko/dirtyfrag-android16-6.12.ko;\
-${CMAKE_CURRENT_SOURCE_DIR}/ko/dirtyfrag-android17-6.18.ko;\
-${CMAKE_CURRENT_SOURCE_DIR}/splicehelper")
+    "${CMAKE_CURRENT_SOURCE_DIR}/ko/dirtyfrag-android16-6.12.ko;${CMAKE_CURRENT_SOURCE_DIR}/splicehelper")
 
 target_link_libraries(exp log)
 target_link_options(exp PRIVATE -Wl,-z,max-page-size=16384)

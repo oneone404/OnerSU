@@ -8,7 +8,7 @@ APK=@APK@
 READY=@READY@
 RUN_ID=@RUN_ID@
 [ -f "$KSUD" ] && [ -f "$APK" ] || exit 1
-"$KSUD" late-load --kmi android16-6.12 --package-name df.root.bootstrap || exit 1
+"$KSUD" late-load --kmi android16-6.12 --package-name com.onersu.onersu.bootstrap || exit 1
 # late-load daemonizes: wait for the actual driver, then validate this APK's
 # signing certificate with the driver's synchronous dynamic-manager API.
 n=0
@@ -28,8 +28,8 @@ done
     n=0
     while [ "$n" -lt 600 ]; do
         if [ -f "$READY" ] && [ "$(cat "$READY" 2>/dev/null)" = "$RUN_ID" ]; then
-            am force-stop df.root
-            am start -n df.root/org.bakasu.bakasu.ui.MainActivity
+            am force-stop com.onersu.onersu
+            am start -n com.onersu.onersu/org.bakasu.bakasu.ui.MainActivity
             exit
         fi
         n=$((n + 1))

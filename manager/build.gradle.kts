@@ -44,10 +44,13 @@ extra["androidCompileNdkVersion"] = libs.versions.ndk.get()
 extra["androidSourceCompatibility"] = JavaVersion.VERSION_21
 extra["androidTargetCompatibility"] = JavaVersion.VERSION_21
 extra["managerVersionCode"] = 40000 + getGitCommitCount()
-extra["managerVersionName"] = "0.1.0"
+extra["managerVersionName"] = "0.1.1"
 extra["isPrBuild"] = project.findProperty("IS_PR_BUILD")?.toString()?.toBoolean() ?: false
-extra["defaultManagerPackageName"] = "df.root"
+extra["defaultManagerPackageName"] = "com.onersu.onersu"
 extra["managerPackageName"] = project.findProperty("KSU_PACKAGE_NAME")?.toString() ?: extra["defaultManagerPackageName"]
+require(extra["managerPackageName"] == extra["defaultManagerPackageName"]) {
+    "The integrated bootstrap requires applicationId com.onersu.onersu"
+}
 extra["defaultManagerAppName"] = "OnerSU"
 extra["managerName"] = project.findProperty("KSU_NAME")?.toString() ?: extra["defaultManagerAppName"]
 

@@ -2,7 +2,7 @@
 
 **Một APK chứa manager ReSukiSU/BakaSU và mã nguồn DFRoot**, với nút **Root bằng DFRoot** ngay trên trang chính. Tên hiển thị là **OnerSU**.
 
-## Phạm vi bản 0.1.0
+## Phạm vi bản 0.1.1
 
 - Hồ sơ root: **OPPO PME110**, Android 16, ROM **16.0.9.402(CN01)**, kernel `android16-6.12`.
 - Kiểm tra model, API, ABI và fingerprint trước khi cho chạy. Máy/ROM khác chỉ dùng được các chức năng manager tương thích; nút root bị khóa.
@@ -14,7 +14,9 @@
 
 Mở OnerSU → **Root bằng DFRoot** → **Chạy DFRoot**. Theo dõi nhật ký. Manager sẽ mở lại sau khi DFRoot kết thúc bước khôi phục và bộ root đăng ký APK xong. Root dùng khai thác kernel, có thể làm máy treo hoặc khởi động lại; không mở lại/chạy lại trong khi thao tác còn đang diễn ra.
 
-Ứng dụng dùng package **`df.root`** để khớp đường dẫn bootstrap trong module đã kiểm tra. Vì vậy APK này thay thế ứng dụng DFRoot riêng. Nếu chữ ký khác bản DFRoot đã cài, Android sẽ yêu cầu gỡ bản cũ trước khi cài. OnerSU không thay thế package AgnesSU; việc chuyển sang backend BakaSU cần thực hiện trong một phiên khởi động sạch.
+Ứng dụng dùng package riêng **`com.onersu.onersu`** và khóa ký riêng của OnerSU. Module bootstrap đã được build lại từ nguồn với đường dẫn mới, nên không cần cài DFRoot riêng. Namespace Java/JNI kế thừa được giữ để tương thích nội bộ; chúng không phải package ứng dụng đã cài. OnerSU không thay thế package AgnesSU; việc chuyển sang backend BakaSU cần thực hiện trong một phiên khởi động sạch.
+
+Icon dùng ảnh logo do người dùng cung cấp, đóng gói thành adaptive icon. Launcher quyết định dạng bo góc hoặc tròn theo cài đặt của máy.
 
 ## Kiến trúc
 
@@ -41,7 +43,7 @@ Windows: dùng `gradlew.bat`; khai báo SDK/NDK trong `manager/local.properties`
 
 Repo giữ bản backend đã xác minh. Script fetch kiểm tra SHA-256 của binary có sẵn; nếu thiếu thì tải và kiểm tra cả ZIP lẫn `ksud`, không lấy backend mới tùy ý. Artifact upstream có thể hết hạn; nếu vậy cần khôi phục **đúng** artifact từ bản lưu đã xác minh hoặc rebuild backend từ commit được ghi trong [PROVENANCE.md](PROVENANCE.md). Không bỏ kiểm tra hash để lấy một binary khác.
 
-Workflow GitHub chỉ chạy thủ công và xuất APK **chưa ký**. Ký bản cài đặt bằng khóa riêng giữ ngoài repo; khóa ký và mật khẩu không được commit. Package bootstrap là `df.root`; không đổi applicationId khi sử dụng module hiện tại.
+Workflow GitHub chỉ chạy thủ công và xuất APK **chưa ký**. Ký bản cài đặt bằng khóa riêng giữ ngoài repo; khóa ký và mật khẩu không được commit. Package bootstrap là `com.onersu.onersu`; không đổi applicationId khi sử dụng module hiện tại. Workflow `build-bootstrap.yml` build module `android16-6.12` từ nguồn với DDK image được ghim theo digest. Các module KMI cũ được giữ làm nguồn tham khảo, không nhúng trong APK 0.1.1.
 
 ## Nguồn và giấy phép
 

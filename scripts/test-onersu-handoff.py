@@ -66,8 +66,8 @@ with tempfile.TemporaryDirectory(prefix="onersu-handoff-") as tmp:
     ready.write_text("fresh-run")
     wait_for(lambda: "am start" in calls.read_text())
     text = calls.read_text()
-    assert "late-load --kmi android16-6.12 --package-name df.root.bootstrap" in text
-    assert "am force-stop df.root\nam start -n df.root/org.bakasu.bakasu.ui.MainActivity" in text
+    assert "late-load --kmi android16-6.12 --package-name com.onersu.onersu.bootstrap" in text
+    assert "am force-stop com.onersu.onersu\nam start -n com.onersu.onersu/org.bakasu.bakasu.ui.MainActivity" in text
     calls.write_text("")
     env["TEST_LATE_FAIL"] = "1"
     assert subprocess.run([SH, launcher.as_posix()], env=env).returncode == 1
