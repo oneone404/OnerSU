@@ -3,6 +3,10 @@
 # The package argument is used only for the upstream restart at the end of
 # late-load. A noninstalled target prevents force-stop from killing DFRoot
 # before it restores its page-cache hooks. Register our real APK separately.
+# The kernel helper inherits a vendor-first PATH. Use system tools so sleep
+# keeps working after late-load restores SELinux enforcing.
+PATH=/system/bin:/system/xbin
+export PATH
 KSUD=@KSUD@
 APK=@APK@
 READY=@READY@

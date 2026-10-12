@@ -43,6 +43,9 @@ with tempfile.TemporaryDirectory(prefix="onersu-handoff-") as tmp:
                        encoding="utf-8", newline="\n")
     apk.write_bytes(b"mock APK")
     script = (ROOT / "manager/app/src/main/assets/ksud").read_text()
+    assert "PATH=/system/bin:/system/xbin" in script
+    # This PC fixture supplies mock commands instead of Android's system tools.
+    script = script.replace("PATH=/system/bin:/system/xbin", "# Use fixture PATH")
     for key, value in {"KSUD": ksud.as_posix(), "APK": apk.as_posix(),
                        "READY": ready.as_posix(), "RUN_ID": "fresh-run"}.items():
         script = script.replace("@" + key + "@", quote(value))

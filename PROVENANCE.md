@@ -22,8 +22,8 @@
 - Module vermagic remains `6.12.76-4k SMP preempt mod_unload modversions aarch64`, matching the original bootstrap. Only this android16-6.12 bootstrap is embedded in the APK; other original KMI binaries are retained as reference assets.
 - The helper is rebuilt from `splicehelper.c`; no separate DFRoot APK is included.
 - Native integration changes: CMake subdirectory paths, C23-compatible `__asm__`, absolute binary inclusion paths required for LTO, and separate manager/DFRoot build targets. The root primitive and restoration routines are retained.
-- Java integration adds a shim, a unique per-run cleanup token and manager registration/restart ordering. Soft reboot is disabled for the merged flow.
+- Java integration adds a shim, a unique per-run cleanup token and manager registration/restart ordering. The shim uses a system-first PATH so the inherited vendor PATH cannot select a sleep binary denied by SELinux. Soft reboot is disabled for the merged flow.
 
 ## Validation boundary
 
-PC checks cover compilation, Android lint, Kotlin formatting, mock backend/cleanup ordering, APK contents and signing. They do **not** validate the new merged app on hardware, driver compatibility after loading, Android SELinux access to the cleanup token, or installation over another signing key. No persistent-root or bootloader-unlock support is claimed.
+PC checks cover compilation, Android lint, Kotlin formatting, mock backend/cleanup ordering, APK contents, V2-only signing and the kernel's 1024-byte certificate limit. On 2026-10-12 the running PME110 driver reported `v4.2.0-rc3-f6cb7e70@BakaSU`, UAPI 5. OnerSU's 0.1.2 certificate was registered through the dynamic-manager API; the kernel crowned the installed package and the relaunched app inherited `anon_inode:[ksu_driver]`. The new APK was installed and previous app settings were restored under the new UID. A fresh-boot exploit run with 0.1.2 and the cleanup-token handoff have not been tested on hardware. No persistent-root or bootloader-unlock support is claimed.

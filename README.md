@@ -2,13 +2,13 @@
 
 **Một APK chứa manager ReSukiSU/BakaSU và mã nguồn DFRoot**, với nút **Root bằng DFRoot** ngay trên trang chính. Tên hiển thị là **OnerSU**.
 
-## Phạm vi bản 0.1.1
+## Phạm vi bản 0.1.2
 
 - Hồ sơ root: **OPPO PME110**, Android 16, ROM **16.0.9.402(CN01)**, kernel `android16-6.12`.
 - Kiểm tra model, API, ABI và fingerprint trước khi cho chạy. Máy/ROM khác chỉ dùng được các chức năng manager tương thích; nút root bị khóa.
 - Root **tạm thời**: khởi động lại hoàn toàn sẽ mất root; mở OnerSU và chạy DFRoot lại.
 - Không tự chạy exploit khi khởi động máy. Không tự soft reboot. Không unlock bootloader.
-- DFRoot đã hoạt động trên cấu hình này trong APK riêng. **Luồng gộp OnerSU mới chưa được chạy thử trên điện thoại**; đã build, lint và kiểm tra luồng bàn giao bằng chương trình mô phỏng trên PC.
+- Luồng gộp đã nạp BakaSU trên PME110. Bản 0.1.1 gặp lỗi đăng ký manager do định dạng/chứng chỉ ký APK; bản 0.1.2 sửa các lỗi này và đã được kiểm tra nhận driver trong phiên root hiện có. Chưa chạy lại exploit từ một phiên khởi động sạch với bản 0.1.2.
 
 ## Dùng
 
@@ -17,6 +17,7 @@ Mở OnerSU → **Root bằng DFRoot** → **Chạy DFRoot**. Theo dõi nhật k
 Ứng dụng dùng package riêng **`com.onersu.onersu`** và khóa ký riêng của OnerSU. Module bootstrap đã được build lại từ nguồn với đường dẫn mới, nên không cần cài DFRoot riêng. Namespace Java/JNI kế thừa được giữ để tương thích nội bộ; chúng không phải package ứng dụng đã cài. OnerSU không thay thế package AgnesSU; việc chuyển sang backend BakaSU cần thực hiện trong một phiên khởi động sạch.
 
 Icon dùng ảnh logo do người dùng cung cấp, đóng gói thành adaptive icon. Launcher quyết định dạng bo góc hoặc tròn theo cài đặt của máy.
+Logo có khoảng đệm theo tỷ lệ để giữ kích thước ảnh bình thường khi launcher áp dụng mặt nạ adaptive icon.
 
 ## Kiến trúc
 
@@ -43,7 +44,11 @@ Windows: dùng `gradlew.bat`; khai báo SDK/NDK trong `manager/local.properties`
 
 Repo giữ bản backend đã xác minh. Script fetch kiểm tra SHA-256 của binary có sẵn; nếu thiếu thì tải và kiểm tra cả ZIP lẫn `ksud`, không lấy backend mới tùy ý. Artifact upstream có thể hết hạn; nếu vậy cần khôi phục **đúng** artifact từ bản lưu đã xác minh hoặc rebuild backend từ commit được ghi trong [PROVENANCE.md](PROVENANCE.md). Không bỏ kiểm tra hash để lấy một binary khác.
 
-Workflow GitHub chỉ chạy thủ công và xuất APK **chưa ký**. Ký bản cài đặt bằng khóa riêng giữ ngoài repo; khóa ký và mật khẩu không được commit. Package bootstrap là `com.onersu.onersu`; không đổi applicationId khi sử dụng module hiện tại. Workflow `build-bootstrap.yml` build module `android16-6.12` từ nguồn với DDK image được ghim theo digest. Các module KMI cũ được giữ làm nguồn tham khảo, không nhúng trong APK 0.1.1.
+Workflow GitHub chỉ chạy thủ công và xuất APK **chưa ký**. Ký bản cài đặt bằng khóa riêng giữ ngoài repo; khóa ký và mật khẩu không được commit. **Chỉ ký V2**, với chứng chỉ DER dài **256–1024 byte**: cả `ksud set-apk` và driver đều từ chối V1/V3/V3.1; driver còn giới hạn chứng chỉ ở 1024 byte. Dùng DN ngắn như `CN=OnerSU`. Dùng `scripts/sign-onersu-release.py` với đường dẫn build tools, keystore và hai tệp mật khẩu bên ngoài repo; script ký V2, kiểm tra chữ ký bằng apksigner và kiểm tra định dạng driver. Sau đó chạy `scripts/verify-onersu-apk.py APK AAPT2` để kiểm tra gói hoàn chỉnh. Bản 0.1.1 ký V3 và có chứng chỉ 1048 byte đã nạp root nhưng không đăng ký được manager; bản 0.1.2 dùng V2 và chứng chỉ 971 byte.
+
+Chứng chỉ 0.1.2 được tạo từ cùng khóa riêng với DN ngắn hơn, nhưng Android coi đây là chữ ký APK mới. Khi chuyển từ 0.1.1 cần sao lưu dữ liệu ứng dụng trước khi cài lại; các bản tiếp theo giữ nguyên chứng chỉ 0.1.2 để cập nhật bình thường. Khi khôi phục dữ liệu sau khi UID thay đổi, phải sửa chủ sở hữu và dùng `restorecon -RFD` cho thư mục ứng dụng. Kiểm tra danh tính bản phát hành trong manager cũng được đổi sang đúng chứng chỉ OnerSU; trình kiểm tra APK xác nhận dữ liệu này khớp với chứng chỉ ký thực tế. Bản fork tự ký cần cập nhật danh tính bản phát hành tương ứng.
+
+Package bootstrap là `com.onersu.onersu`; không đổi applicationId khi sử dụng module hiện tại. Workflow `build-bootstrap.yml` build module `android16-6.12` từ nguồn với DDK image được ghim theo digest. Các module KMI cũ được giữ làm nguồn tham khảo, không nhúng trong APK 0.1.2.
 
 ## Nguồn và giấy phép
 

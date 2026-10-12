@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
-        <bitmap android:src="@drawable/onersu_logo" android:gravity="fill" />
-    </item>
-</layer-list>
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:insetLeft="16.6667%"
+    android:insetTop="16.6667%"
+    android:insetRight="16.6667%"
+    android:insetBottom="16.6667%">
+    <bitmap android:src="@drawable/onersu_logo" android:gravity="fill" />
+</inset>
