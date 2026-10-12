@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="oner_root_title">Root bằng DFRoot</string>
+    <string name="oner_root_title">DFROOT</string>
     <string name="oner_root_description">DFRoot được tích hợp trong OnerSU. Root tạm mất sau khi khởi động lại hoàn toàn. Bản này dành cho PME110, ROM 16.0.9.402.</string>
     <string name="oner_root_ready">Sẵn sàng chạy</string>
     <string name="oner_root_running">Đang root và khôi phục các thay đổi tạm…</string>
