@@ -37,3 +37,18 @@ Before reinstalling, the actual installed APK and four application-data archives
 ## Verification boundary
 
 The root exploit was not rerun and the phone was not rebooted during this repair. Registration and manager operation were verified in the already active BakaSU root session. A fresh-boot DFRoot attempt with 0.1.2 and the cleanup-token handoff still need hardware validation. Root remains temporary; persistent root and bootloader unlock are not implemented. The manual GitHub workflow produces unsigned builds.
+
+## 0.1.3 root result and manual soft restart
+
+Date: 2026-10-12. APK built from source commit `b3edc34`, version code 40005.
+
+- `spotlessCheck`, `assembleRelease`, and `lintRelease`: pass; lint has 0 errors and 56 inherited warnings.
+- The bootstrap records successful dynamic-manager registration with the current run UUID. Java clears the record using an app-owned file so its SELinux label is retained. Native timeout is a pending confirmation, not a root failure verdict. The repository waits for matching registration evidence after native cleanup.
+- The hook mutex alone never proves root. The soft restart button requires native manager access and a matching UAPI; driver presence without manager readiness has a separate status.
+- Mocked real bootstrap: pass for delayed registration, stale cleanup token rejection, fresh registration evidence, reopening the root log after cleanup, late-load failure, and rejected manager registration. Failure cases do not write a success token or restart the manager.
+- Signed release package verification: pass; V2-only signature, same 971-byte certificate as 0.1.2, same pinned backend/KO, updated shim and neutral native timeout text.
+- Updated the plugged-in PME110 in place without clearing application data. Package reports 0.1.3 / 40005. Root log screen shows confirmed manager access and the manual soft restart button at the lower right. The app process holds FD 6, `anon_inode:[ksu_driver]`. `su -c id` remains uid 0 and SELinux remains Enforcing.
+- Copied to `/sdcard/Download/OnerSU_0.1.3.apk`; device hash matches the PC artifact. APK SHA-256: `cb9ecda3d7dda1a35ed08847caaf5b13b5e7085ada80c311eb37b0c5c06df3c7`.
+- No root exploit or Android restart was executed during the 0.1.3 update. The new fresh-boot root/registration/reopen sequence still needs device validation. The soft restart action reuses the existing backend route that the user successfully used with ReZygisk and HMA before this update.
+
+The user's SUSFS ZIP, `susfs-lkm-module-0.2.0-arm64-multi-kmi.zip`, only packages KMIs through android15-6.6. Its `select_kmi` rejects this phone's android16-6.12 kernel. No saved SUSFS installation log was found; this mismatch was verified from the actual ZIP installer and KMI list. No attempt was made to load a mismatched module.
