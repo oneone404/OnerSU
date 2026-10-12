@@ -1,0 +1,36 @@
+name: Build OnerSU
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  manager:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v3
+      - name: Install SDK and NDK
+        run: sdkmanager 'platforms;android-37.0' 'build-tools;36.1.0' 'cmake;3.22.1' 'ndk;30.0.16248370'
+      - name: Fetch verified backend
+        run: python3 scripts/fetch-onersu-backend.py
+      - name: Check cleanup handoff
+        run: python3 scripts/test-onersu-handoff.py
+      - name: Check formatting
+        working-directory: manager
+        run: sh gradlew spotlessCheck --console=plain
+      - name: Build and lint
+        working-directory: manager
+        run: sh gradlew assembleRelease lintRelease --console=plain
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OnerSU-unsigned
+          path: manager/app/build/outputs/apk/release/*.apk

@@ -1,0 +1,39 @@
+#!/system/bin/sh
+# OnerSU single-APK bootstrap, pinned to BakaSU f6cb7e70.
+# The package argument is used only for the upstream restart at the end of
+# late-load. A noninstalled target prevents force-stop from killing DFRoot
+# before it restores its page-cache hooks. Register our real APK separately.
+KSUD=@KSUD@
+APK=@APK@
+READY=@READY@
+RUN_ID=@RUN_ID@
+[ -f "$KSUD" ] && [ -f "$APK" ] || exit 1
+"$KSUD" late-load --kmi android16-6.12 --package-name df.root.bootstrap || exit 1
+# late-load daemonizes: wait for the actual driver, then validate this APK's
+# signing certificate with the driver's synchronous dynamic-manager API.
+n=0
+registered=0
+while [ "$n" -lt 100 ]; do
+    if "$KSUD" kernel dynamic-manager set-apk "$APK" >/dev/null 2>&1; then
+        registered=1
+        break
+    fi
+    n=$((n + 1))
+    sleep 0.1
+done
+[ "$registered" -eq 1 ] || exit 1
+# The Java runner signals ONLY after nativeRunAll has returned from cleanup.
+# Restart then, so the new manager process receives its KernelSU driver fd.
+(
+    n=0
+    while [ "$n" -lt 600 ]; do
+        if [ -f "$READY" ] && [ "$(cat "$READY" 2>/dev/null)" = "$RUN_ID" ]; then
+            am force-stop df.root
+            am start -n df.root/org.bakasu.bakasu.ui.MainActivity
+            exit
+        fi
+        n=$((n + 1))
+        sleep 0.1
+    done
+) </dev/null >/dev/null 2>&1 &
+exit 0

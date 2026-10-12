@@ -1,0 +1,7 @@
+*.sh text eol=lf
+*.py text eol=lf
+*.kt text eol=lf
+*.kts text eol=lf
+manager/gradlew text eol=lf
+manager/app/src/main/assets/ksud text eol=lf
+*.bat text eol=crlf

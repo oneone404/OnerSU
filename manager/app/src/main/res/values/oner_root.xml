@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="oner_root_title">Root with DFRoot</string>
+    <string name="oner_root_description">DFRoot is built into OnerSU. Temporary root ends after a full reboot. This build is for PME110 firmware 16.0.9.402.</string>
+    <string name="oner_root_ready">Ready to start</string>
+    <string name="oner_root_running">Rooting and restoring temporary patches…</string>
+    <string name="oner_root_completed">Cleanup finished. OnerSU will reopen when the root backend is ready.</string>
+    <string name="oner_root_failed">The attempt did not finish successfully. Read the log below.</string>
+    <string name="oner_root_loaded">Root is already loaded in this session.</string>
+    <string name="oner_root_unsupported">This device or firmware is outside the tested PME110 profile.</string>
+    <string name="oner_root_run">Run DFRoot</string>
+    <string name="oner_root_log">Run log</string>
+    <string name="oner_root_back">Back</string>
+</resources>

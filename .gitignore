@@ -1,0 +1,16 @@
+.idea
+.DS_Store
+build.sh
+*.code-workspace
+.trae
+/userspace/ksud/.lkm_image_bootstrap.o
+# OnerSU local build products and private signing material
+/upstream-assets/
+/integrate-onersu.py
+/artifacts/
+*.jks
+*.keystore
+*.log
+**/.cxx/
+**/__pycache__/
+/manager/app/src/main/cpp/dfroot/splicehelper
