@@ -1,0 +1,35 @@
+name: Build OnerSU bootstrap
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build android16-6.12 module from source
+        working-directory: dfroot/dirtyfrag-lkm
+        run: |
+          docker pull ghcr.io/ylarod/ddk-min:android16-6.12
+          docker image inspect ghcr.io/ylarod/ddk-min:android16-6.12 --format '{{index .RepoDigests 0}}' > image-digest.txt
+          docker run --rm --pid=host --network=none -v "$PWD":/src -w /src ghcr.io/ylarod/ddk-min:android16-6.12 make
+          sudo apt-get update -qq
+          sudo apt-get install -y llvm
+          llvm-objcopy --strip-unneeded \
+            -R .comment -R .note.gnu.build-id -R .note.gnu.property -R .note.Linux -R .note.GNU-stack \
+            -R .BTF -R .BTF.base -R .llvm_addrsig \
+            -R .hyp.text -R .hyp.bss -R .hyp.rodata -R .hyp.event_ids \
+            -R .hyp.patchable_function_entries -R .hyp.data \
+            dirtyfrag.ko dirtyfrag-android16-6.12.ko
+          sha256sum dirtyfrag-android16-6.12.ko
+          llvm-readelf -p .modinfo dirtyfrag-android16-6.12.ko
+      - uses: actions/upload-artifact@v4
+        with:
+          name: onersu-bootstrap-android16-6.12
+          path: |
+            dfroot/dirtyfrag-lkm/dirtyfrag-android16-6.12.ko
+            dfroot/dirtyfrag-lkm/image-digest.txt

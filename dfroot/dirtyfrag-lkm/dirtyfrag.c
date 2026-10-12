@@ -61,7 +61,7 @@ static int __nocfi __init dirtyfrag_init(void) {
 		snprintf(cmd, sizeof(cmd),
 			 "%s late-load --package-name me.weishu.kernelsu --ro-partitions%s"
 			 " && touch /dev/dfm0 || touch /dev/dfm1",
-			 "/data/user_de/0/df.root/ksud", soft_reboot ? " --soft-reboot" : "");
+             "/data/user_de/0/com.onersu.onersu/ksud", soft_reboot ? " --soft-reboot" : "");
 
 		info = umh_setup(sh, argv, envp, GFP_KERNEL, NULL, NULL, NULL);
 		if (info) {
