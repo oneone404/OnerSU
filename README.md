@@ -1,5 +1,12 @@
 # OnerSU
 
+## 0.1.4
+
+- The root log's Soft restart button is available after current-run manager registration and native cleanup succeed, including before the old app process receives its driver FD.
+- Returning to the root screen refreshes live manager readiness.
+- A rejected soft restart now reports failure instead of leaving the button stuck on "Restarting".
+- Signed APK releases are published at https://github.com/oneone404/OnerSU/releases. The manager checks this repository for stable updates; use the same release signing certificate for in-place updates.
+
 **Một APK chứa manager ReSukiSU/BakaSU và mã nguồn DFRoot**, với nút **Root bằng DFRoot** ngay trên trang chính. Tên hiển thị là **OnerSU**.
 
 ## Phạm vi bản 0.1.3

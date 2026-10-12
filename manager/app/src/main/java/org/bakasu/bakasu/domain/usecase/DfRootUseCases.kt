@@ -9,3 +9,7 @@ class ObserveDfRootUseCase(private val repository: DfRootRepository) {
 class RunDfRootUseCase(private val repository: DfRootRepository) {
     operator fun invoke() = repository.run()
 }
+
+class RefreshDfRootUseCase(private val repository: DfRootRepository) {
+    operator fun invoke() = repository.refreshManagerAccess()
+}

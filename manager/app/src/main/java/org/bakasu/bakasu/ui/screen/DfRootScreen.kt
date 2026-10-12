@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.bakasu.bakasu.R
 import org.bakasu.bakasu.domain.model.DfRootRestartStatus
@@ -41,6 +42,10 @@ fun DfRootScreen(onBack: () -> Unit) {
     val viewModel = koinViewModel<DfRootViewModel>()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val restartStatus by viewModel.restartStatus.collectAsStateWithLifecycle()
+    LifecycleResumeEffect(Unit) {
+        viewModel.refreshManagerAccess()
+        onPauseOrDispose { }
+    }
     BackHandler(onBack = onBack)
     val status = when (state.status) {
         DfRootStatus.Idle -> R.string.oner_root_ready

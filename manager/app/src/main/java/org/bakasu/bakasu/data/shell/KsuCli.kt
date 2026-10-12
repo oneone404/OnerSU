@@ -443,7 +443,7 @@ class KsuCliRepository(context: Context) {
 
     fun reboot(reason: String = "") {
         if (reason == "soft_reboot") {
-            execKsud("soft-reboot", newShell = true, globalMnt = true)
+            check(execKsud("soft-reboot", newShell = true, globalMnt = true)) { "Failed to start Android soft restart" }
             return
         }
         val shell = getRootShell()

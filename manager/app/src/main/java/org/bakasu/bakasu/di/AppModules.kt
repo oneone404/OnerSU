@@ -119,6 +119,7 @@ import org.bakasu.bakasu.domain.usecase.ObserveSulogStateUseCase
 import org.bakasu.bakasu.domain.usecase.ObserveSuperUserStateUseCase
 import org.bakasu.bakasu.domain.usecase.ObserveUmountStateUseCase
 import org.bakasu.bakasu.domain.usecase.RebootUseCase
+import org.bakasu.bakasu.domain.usecase.RefreshDfRootUseCase
 import org.bakasu.bakasu.domain.usecase.RefreshDynamicManagerUseCase
 import org.bakasu.bakasu.domain.usecase.RefreshInstalledModulesUseCase
 import org.bakasu.bakasu.domain.usecase.RefreshModuleCatalogUseCase
@@ -300,6 +301,7 @@ val repositoryModule = module {
 
 val useCaseModule = module {
     factoryOf(::ObserveDfRootUseCase)
+    factoryOf(::RefreshDfRootUseCase)
     factoryOf(::RunDfRootUseCase)
     factoryOf(::InitializeApplicationUseCase)
     factoryOf(::GetHomeBasicInfoUseCase)

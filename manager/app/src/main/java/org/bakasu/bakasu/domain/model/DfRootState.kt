@@ -7,5 +7,8 @@ enum class DfRootRestartStatus { Idle, Running, Failed }
 data class DfRootState(
     val status: DfRootStatus = DfRootStatus.Idle,
     val log: String = "",
-    val canSoftReboot: Boolean = false,
-)
+) {
+    // Completed already proves current-run registration and native cleanup.
+    // The old app process may receive its driver fd only after the handoff.
+    val canSoftReboot: Boolean get() = status == DfRootStatus.Completed || status == DfRootStatus.AlreadyLoaded
+}

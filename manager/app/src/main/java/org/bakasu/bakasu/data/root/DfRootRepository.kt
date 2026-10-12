@@ -36,10 +36,22 @@ class DfRootRepository(
         } else {
             previous
         }
-        mutableState.value = DfRootState(initialStatus(), log, managerReady)
+        mutableState.value = DfRootState(initialStatus(), log)
     }
 
     private fun hasManagerDriver() = runCatching { Natives.version > 0 && Natives.isFullFeatured() }.getOrDefault(false)
+
+    fun refreshManagerAccess() {
+        mutableState.update {
+            if (it.status == DfRootStatus.Running || it.status == DfRootStatus.Verifying || it.status == DfRootStatus.Completed) {
+                it
+            } else if (hasManagerDriver()) {
+                it.copy(status = DfRootStatus.AlreadyLoaded)
+            } else {
+                it
+            }
+        }
+    }
 
     private fun initialStatus(): DfRootStatus {
         if (hasManagerDriver()) return DfRootStatus.AlreadyLoaded
@@ -61,7 +73,7 @@ class DfRootRepository(
         if (mutableState.value.status == DfRootStatus.Running || mutableState.value.status == DfRootStatus.Verifying) return
         val eligibility = initialStatus()
         if (eligibility != DfRootStatus.Idle) {
-            mutableState.update { it.copy(status = eligibility, canSoftReboot = hasManagerDriver()) }
+            mutableState.update { it.copy(status = eligibility) }
             return
         }
         mutableState.value = DfRootState(DfRootStatus.Running)
@@ -88,7 +100,6 @@ class DfRootRepository(
                         } else {
                             DfRootStatus.Failed
                         },
-                        canSoftReboot = verified && hasManagerDriver(),
                     )
                 }
             } catch (error: Exception) {
