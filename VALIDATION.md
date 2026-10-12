@@ -52,3 +52,15 @@ Date: 2026-10-12. APK built from source commit `b3edc34`, version code 40005.
 - No root exploit or Android restart was executed during the 0.1.3 update. The new fresh-boot root/registration/reopen sequence still needs device validation. The soft restart action reuses the existing backend route that the user successfully used with ReZygisk and HMA before this update.
 
 The user's SUSFS ZIP, `susfs-lkm-module-0.2.0-arm64-multi-kmi.zip`, only packages KMIs through android15-6.6. Its `select_kmi` rejects this phone's android16-6.12 kernel. No saved SUSFS installation log was found; this mismatch was verified from the actual ZIP installer and KMI list. No attempt was made to load a mismatched module.
+
+## 0.1.4 soft restart availability and signed release
+
+Date: 2026-10-12. APK source commit `85891bd`, version code 40008.
+
+- Corrected the state mismatch where `Completed` was confirmed by the current registration token after native cleanup, but `canSoftReboot` remained false because the original process did not yet hold its driver FD. Availability now derives from the trusted `Completed` or `AlreadyLoaded` status rather than a separately latched flag. Mere module presence and historical logs cannot enable the button.
+- Refreshes manager readiness on root-screen resume through a repository/use-case/ViewModel boundary. Checks the soft restart backend's exit result so rejected requests become a visible failure.
+- The home button and root-page title read `DFROOT` in English, Vietnamese and Simplified Chinese resources; confirmed in the final APK resource table.
+- Final `spotlessCheck`, `assembleRelease`, `lintRelease`: pass; 0 lint errors and 56 inherited warnings. Mock bootstrap handoff checks: pass. Existing package verification: pass for pinned backend/module, native runner, shim, icon, package and release signing identity.
+- Signed APK: `OnerSU_0.1.4_40008-arm64-v8a-release.apk`; SHA-256 `a6fb52dafa7c1d8019d1188222db8fc22c3d8d86bd54eb1f5d8b5c31dd8b74e5`. V2-only signature, same 971-byte certificate as 0.1.3, SHA-256 `1f14b12db494dcaebd8edeada2805bd6c5e45fbe1cda89c39194ff3b642294db`.
+- Connected phone still runs 0.1.3 / 40005 with working root and a manager driver FD. No fresh exploit run, Android restart, or 0.1.4 installation was performed during this repair; the user requested delivery via the online updater. Fresh-boot 0.1.4 behavior remains untested on hardware.
+- The stable updater already targets `oneone404/OnerSU` and accepts the released asset's filename and higher version code. The manual CI workflow still produces unsigned artifacts; the stable release is signed locally with the private key kept outside this repository.
