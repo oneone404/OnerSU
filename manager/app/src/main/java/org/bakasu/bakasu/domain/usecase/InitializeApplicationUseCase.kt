@@ -8,11 +8,13 @@ class InitializeApplicationUseCase(
     private val settingsRepository: AppSettingsRepository,
     private val startupRepository: StartupRepository,
     private val initializationRepository: ApplicationInitializationRepository,
+    private val reconcileInstallerGuard: ReconcileInstallerGuardUseCase,
 ) {
     suspend operator fun invoke() {
         runCatching {
             settingsRepository.preload()
             initializationRepository.initialize()
+            reconcileInstallerGuard()
         }.onSuccess {
             startupRepository.markReady()
         }.onFailure { error ->

@@ -75,6 +75,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -83,6 +84,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.bakasu.bakasu.BuildConfig
 import org.bakasu.bakasu.R
+import org.bakasu.bakasu.domain.model.InstallerGuardStatus
 import org.bakasu.bakasu.domain.usecase.GenerateBugreportUseCase
 import org.bakasu.bakasu.ui.component.ConfirmResult
 import org.bakasu.bakasu.ui.component.SwipeableSnackbarHost
@@ -128,8 +130,9 @@ fun SettingsPage(bottomPadding: Dp) {
     val uiState by settingsViewModel.uiState.collectAsStateWithLifecycle()
     val homeState by homeViewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
+    LifecycleResumeEffect(Unit) {
         settingsViewModel.dispatch(SettingsUiAction.LoadFeatureSettings)
+        onPauseOrDispose { }
     }
 
     Scaffold(
@@ -375,6 +378,39 @@ fun SettingsPage(bottomPadding: Dp) {
                 SegmentedColumn(
                     title = stringResource(R.string.app_settings),
                     content = {
+                        item {
+                            val guard = uiState.installerGuard
+                            val status = when (guard.status) {
+                                InstallerGuardStatus.Off -> R.string.oner_installer_guard_off
+
+                                InstallerGuardStatus.WaitingForRoot -> if (guard.enabled) {
+                                    R.string.oner_installer_guard_waiting
+                                } else {
+                                    R.string.oner_installer_guard_waiting_restore
+                                }
+
+                                InstallerGuardStatus.Applying -> R.string.oner_installer_guard_applying
+
+                                InstallerGuardStatus.Blocked -> R.string.oner_installer_guard_blocked
+
+                                InstallerGuardStatus.Failed -> if (guard.enabled) {
+                                    R.string.oner_installer_guard_failed
+                                } else {
+                                    R.string.oner_installer_guard_restore_failed
+                                }
+                            }
+                            SettingsSwitchWidget(
+                                icon = Icons.TwoTone.Policy,
+                                title = stringResource(R.string.oner_installer_guard_title),
+                                description = stringResource(status),
+                                checked = guard.enabled,
+                                enabled = guard.status != InstallerGuardStatus.Applying,
+                                isError = guard.status == InstallerGuardStatus.Failed,
+                                onCheckedChange = { enabled ->
+                                    settingsViewModel.dispatch(SettingsUiAction.SetInstallerGuard(enabled))
+                                },
+                            )
+                        }
                         expandableItem(
                             expanded = uiState.checkManagerUpdate,
                             topContent = {

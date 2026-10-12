@@ -17,12 +17,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.bakasu.bakasu.Natives
 import org.bakasu.bakasu.R
+import org.bakasu.bakasu.data.settings.InstallerGuardRepository
 import org.bakasu.bakasu.domain.model.DfRootState
 import org.bakasu.bakasu.domain.model.DfRootStatus
 
 class DfRootRepository(
     private val application: Application,
     private val applicationScope: CoroutineScope,
+    private val installerGuard: InstallerGuardRepository,
 ) {
     private val files get() = application.createDeviceProtectedStorageContext().filesDir
     private val mutableState = MutableStateFlow(DfRootState())
@@ -42,6 +44,8 @@ class DfRootRepository(
     private fun hasManagerDriver() = runCatching { Natives.version > 0 && Natives.isFullFeatured() }.getOrDefault(false)
 
     fun refreshManagerAccess() {
+        // A freshly registered manager receives its usable root FD after the handoff.
+        if (hasManagerDriver()) installerGuard.reconcileInBackground()
         mutableState.update {
             if (it.status == DfRootStatus.Running || it.status == DfRootStatus.Verifying || it.status == DfRootStatus.Completed) {
                 it

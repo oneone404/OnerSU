@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="oner_installer_guard_title">Block OPPO installer</string>
+    <string name="oner_installer_guard_off">Off · Restore the saved state when disabled.</string>
+    <string name="oner_installer_guard_waiting">Waiting for root · Blocking will apply after DFROOT succeeds.</string>
+    <string name="oner_installer_guard_waiting_restore">Waiting for root to restore the saved state.</string>
+    <string name="oner_installer_guard_applying">Applying…</string>
+    <string name="oner_installer_guard_blocked">Blocked · Reapplies after Android soft restart, even without another installer.</string>
+    <string name="oner_installer_guard_failed">Blocking failed · Open settings again to retry.</string>
+    <string name="oner_installer_guard_restore_failed">Restoration failed · Open settings again to retry.</string>
+</resources>

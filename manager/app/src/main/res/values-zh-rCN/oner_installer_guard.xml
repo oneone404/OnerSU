@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="oner_installer_guard_title">禁用 OPPO 安装器</string>
+    <string name="oner_installer_guard_off">已关闭 · 关闭时恢复已保存的状态。</string>
+    <string name="oner_installer_guard_waiting">等待 root · DFROOT 成功后应用。</string>
+    <string name="oner_installer_guard_waiting_restore">等待 root 以恢复已保存的状态。</string>
+    <string name="oner_installer_guard_applying">正在应用…</string>
+    <string name="oner_installer_guard_blocked">已禁用 · Android 软重启后自动重新应用，即使没有其他安装器。</string>
+    <string name="oner_installer_guard_failed">禁用失败 · 重新打开设置以重试。</string>
+    <string name="oner_installer_guard_restore_failed">恢复失败 · 重新打开设置以重试。</string>
+</resources>

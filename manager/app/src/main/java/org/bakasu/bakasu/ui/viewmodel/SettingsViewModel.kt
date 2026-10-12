@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.bakasu.bakasu.R
 import org.bakasu.bakasu.domain.model.AppearanceSetting
+import org.bakasu.bakasu.domain.model.InstallerGuardState
 import org.bakasu.bakasu.domain.model.PlatformSetting
 import org.bakasu.bakasu.domain.model.SettingsPlatformSnapshot
 import org.bakasu.bakasu.domain.model.coerceCompatibleWith
@@ -22,7 +23,10 @@ import org.bakasu.bakasu.domain.usecase.ConfigureSuLogUseCase
 import org.bakasu.bakasu.domain.usecase.GetKernelFeatureSettingsUseCase
 import org.bakasu.bakasu.domain.usecase.GetPlatformFeatureStatusUseCase
 import org.bakasu.bakasu.domain.usecase.LoadSettingsPlatformUseCase
+import org.bakasu.bakasu.domain.usecase.ObserveInstallerGuardUseCase
+import org.bakasu.bakasu.domain.usecase.RefreshInstallerGuardUseCase
 import org.bakasu.bakasu.domain.usecase.SetDefaultUmountModulesUseCase
+import org.bakasu.bakasu.domain.usecase.SetInstallerGuardUseCase
 import org.bakasu.bakasu.domain.usecase.SetKernelUmountEnabledUseCase
 import org.bakasu.bakasu.domain.usecase.SetSelinuxHideEnabledUseCase
 import org.bakasu.bakasu.domain.usecase.SetSuEnabledUseCase
@@ -62,6 +66,7 @@ fun dpiFriendlyNameRes(dpi: Int): Int = when (dpi) {
 }
 
 data class SettingsUiState(
+    val installerGuard: InstallerGuardState = InstallerGuardState(),
     val dpi: Int = 0,
     val predictiveBackAnimation: PredictiveBackAnimation = PredictiveBackAnimation.Scale,
     val predictiveBackExitDirection: PredictiveBackExitDirection =
@@ -105,6 +110,7 @@ data class SettingsUiState(
 )
 
 sealed interface SettingsUiAction {
+    data class SetInstallerGuard(val enabled: Boolean) : SettingsUiAction
     data object Initialize : SettingsUiAction
     data object InitializeFirstRun : SettingsUiAction
     data object LoadFeatureSettings : SettingsUiAction
@@ -162,6 +168,9 @@ class SettingsViewModel(
     private val setSuLogEnabled: ConfigureSuLogUseCase,
     private val setSelinuxHideEnabled: SetSelinuxHideEnabledUseCase,
     private val setDefaultUmountModules: SetDefaultUmountModulesUseCase,
+    observeInstallerGuard: ObserveInstallerGuardUseCase,
+    private val setInstallerGuard: SetInstallerGuardUseCase,
+    private val refreshInstallerGuard: RefreshInstallerGuardUseCase,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow(SettingsUiState())
     val state: StateFlow<SettingsUiState> = mutableState.asStateFlow()
@@ -170,6 +179,11 @@ class SettingsViewModel(
     val events: SharedFlow<SettingsUiEvent> = mutableEvents.asSharedFlow()
 
     init {
+        viewModelScope.launch {
+            observeInstallerGuard().collect { guard ->
+                mutableState.update { it.copy(installerGuard = guard) }
+            }
+        }
         dispatch(SettingsUiAction.Initialize)
     }
 
@@ -183,6 +197,7 @@ class SettingsViewModel(
     }
 
     fun loadFeatureSettings() {
+        viewModelScope.launch { refreshInstallerGuard() }
         viewModelScope.launch {
             val features = getKernelFeatureSettings()
             val platform = getPlatformFeatureStatus()
@@ -419,6 +434,10 @@ class SettingsViewModel(
 
     fun dispatch(action: SettingsUiAction) {
         when (action) {
+            is SettingsUiAction.SetInstallerGuard -> viewModelScope.launch {
+                setInstallerGuard(action.enabled)
+            }
+
             SettingsUiAction.Initialize -> initialize()
 
             SettingsUiAction.InitializeFirstRun -> initializeFirstRunSettings()

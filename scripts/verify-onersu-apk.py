@@ -27,6 +27,8 @@ with zipfile.ZipFile(apk) as bundle:
     assert b"/data/user_de/0/com.onersu.onersu/ksud\x00" in ko
     assert b"/data/user_de/0/df.root/" not in native, "Old app path still embedded"
     shim = bundle.read("assets/ksud")
+    guard = bundle.read("assets/installer-guard.sh")
+    assert guard == (ROOT / "manager/app/src/main/assets/installer-guard.sh").read_bytes(), "Installer guard asset is stale"
     assert b"PATH=/system/bin:/system/xbin" in shim, "Bootstrap must use system tools"
     assert b"\r" not in shim, "Bootstrap must have Unix line endings"
     for placeholder in (b"@KSUD@", b"@APK@", b"@READY@", b"@REGISTERED@", b"@RUN_ID@"):

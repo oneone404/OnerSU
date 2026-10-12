@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="oner_installer_guard_title">Chặn trình cài OPPO</string>
+    <string name="oner_installer_guard_off">Đã tắt · Khi tắt sẽ khôi phục trạng thái đã lưu.</string>
+    <string name="oner_installer_guard_waiting">Chờ root · Sẽ áp dụng sau khi DFROOT thành công.</string>
+    <string name="oner_installer_guard_waiting_restore">Chờ root để khôi phục trạng thái đã lưu.</string>
+    <string name="oner_installer_guard_applying">Đang áp dụng…</string>
+    <string name="oner_installer_guard_blocked">Đã chặn · Tự áp dụng lại sau khởi động phần mềm, kể cả khi không có trình cài thay thế.</string>
+    <string name="oner_installer_guard_failed">Chặn thất bại · Mở lại cài đặt để thử lại.</string>
+    <string name="oner_installer_guard_restore_failed">Khôi phục thất bại · Mở lại cài đặt để thử lại.</string>
+</resources>

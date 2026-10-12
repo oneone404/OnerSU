@@ -1,5 +1,16 @@
 # OnerSU
 
+## 0.1.5
+
+- **Cài đặt → Cài đặt ứng dụng → Chặn trình cài OPPO** là mục đầu tiên. Không yêu cầu InstallerX hoặc một trình cài thay thế.
+- Khi có quyền manager/root, vô hiệu hóa `com.android.packageinstaller` và `com.android.packageinstaller.InstallStart` chỉ cho người dùng Android hiện tại. Lưu trạng thái cũ trước khi thay đổi; không chặn tài khoản nhân bản và các người dùng khác.
+- Nếu người dùng hiện tại thay đổi, lần áp dụng tiếp theo khôi phục người dùng cũ trước khi chặn người dùng mới.
+- Áp dụng lại khi manager nhận root và sau khởi động phần mềm; kiểm tra lại ở mốc +5 và +25 giây rồi kết thúc. Không có tiến trình giám sát liên tục.
+- Công tắc lưu ý định của người dùng; chỉ báo **Đã chặn** khi kiểm tra trạng thái thực tế thành công. Chưa có root thì báo **Chờ root**; lỗi áp dụng/khôi phục có trạng thái riêng.
+- Khi tắt, bỏ tác vụ khởi động và khôi phục trạng thái đã lưu. Nếu chưa có root, giữ yêu cầu khôi phục để xử lý khi root trở lại.
+- Root vẫn tạm thời. Sau khởi động máy hoàn toàn, tác vụ tự chặn chỉ hoạt động khi đã root lại. OTA hoặc ColorOS thay đổi trạng thái ngoài các mốc kiểm tra có thể cần mở lại cài đặt để áp dụng lại.
+- Tác vụ nằm trong `/data/adb/boot-completed.d/onersu-installer-guard.sh`; trạng thái/nhật ký riêng nằm trong `/data/adb/onersu/installer-guard/`. Không sửa phân vùng ROM.
+
 ## 0.1.4
 
 - The root log's Soft restart button is available after current-run manager registration and native cleanup succeed, including before the old app process receives its driver FD.

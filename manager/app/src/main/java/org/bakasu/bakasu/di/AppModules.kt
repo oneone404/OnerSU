@@ -38,6 +38,7 @@ import org.bakasu.bakasu.data.packageinfo.SuperUserRepository
 import org.bakasu.bakasu.data.profile.ProfileRepository
 import org.bakasu.bakasu.data.profile.ProfileTemplateRepository
 import org.bakasu.bakasu.data.root.DfRootRepository
+import org.bakasu.bakasu.data.settings.InstallerGuardRepository
 import org.bakasu.bakasu.data.settings.LocaleHelper
 import org.bakasu.bakasu.data.settings.LocaleRepository
 import org.bakasu.bakasu.data.settings.SettingsPlatformRepository
@@ -108,6 +109,7 @@ import org.bakasu.bakasu.domain.usecase.ObserveDfRootUseCase
 import org.bakasu.bakasu.domain.usecase.ObserveDownloadUseCase
 import org.bakasu.bakasu.domain.usecase.ObserveDynamicManagerStateUseCase
 import org.bakasu.bakasu.domain.usecase.ObserveInstalledModulesUseCase
+import org.bakasu.bakasu.domain.usecase.ObserveInstallerGuardUseCase
 import org.bakasu.bakasu.domain.usecase.ObserveKernelFlashUseCase
 import org.bakasu.bakasu.domain.usecase.ObserveModuleCatalogOfflineUseCase
 import org.bakasu.bakasu.domain.usecase.ObserveModuleCatalogRefreshingUseCase
@@ -119,9 +121,11 @@ import org.bakasu.bakasu.domain.usecase.ObserveSulogStateUseCase
 import org.bakasu.bakasu.domain.usecase.ObserveSuperUserStateUseCase
 import org.bakasu.bakasu.domain.usecase.ObserveUmountStateUseCase
 import org.bakasu.bakasu.domain.usecase.RebootUseCase
+import org.bakasu.bakasu.domain.usecase.ReconcileInstallerGuardUseCase
 import org.bakasu.bakasu.domain.usecase.RefreshDfRootUseCase
 import org.bakasu.bakasu.domain.usecase.RefreshDynamicManagerUseCase
 import org.bakasu.bakasu.domain.usecase.RefreshInstalledModulesUseCase
+import org.bakasu.bakasu.domain.usecase.RefreshInstallerGuardUseCase
 import org.bakasu.bakasu.domain.usecase.RefreshModuleCatalogUseCase
 import org.bakasu.bakasu.domain.usecase.RefreshProfileTemplatesUseCase
 import org.bakasu.bakasu.domain.usecase.RefreshSulogUseCase
@@ -137,6 +141,7 @@ import org.bakasu.bakasu.domain.usecase.SetAppProfileUseCase
 import org.bakasu.bakasu.domain.usecase.SetAppSepolicyUseCase
 import org.bakasu.bakasu.domain.usecase.SetBooleanPreferenceUseCase
 import org.bakasu.bakasu.domain.usecase.SetDefaultUmountModulesUseCase
+import org.bakasu.bakasu.domain.usecase.SetInstallerGuardUseCase
 import org.bakasu.bakasu.domain.usecase.SetKernelUmountEnabledUseCase
 import org.bakasu.bakasu.domain.usecase.SetManualDynamicManagerUseCase
 import org.bakasu.bakasu.domain.usecase.SetModuleEnabledUseCase
@@ -223,7 +228,8 @@ val coreModule = module {
 }
 
 val repositoryModule = module {
-    single { DfRootRepository(androidApplication(), get(applicationScopeQualifier)) }
+    single { DfRootRepository(androidApplication(), get(applicationScopeQualifier), get()) }
+    single { InstallerGuardRepository(androidApplication(), get(), get(), get(applicationScopeQualifier)) }
     single { KsuCliRepository(androidApplication()) }
     singleOf(::CountRepository)
     singleOf(::InstalledPackageCache)
@@ -300,6 +306,10 @@ val repositoryModule = module {
 }
 
 val useCaseModule = module {
+    factoryOf(::ObserveInstallerGuardUseCase)
+    factoryOf(::SetInstallerGuardUseCase)
+    factoryOf(::RefreshInstallerGuardUseCase)
+    factoryOf(::ReconcileInstallerGuardUseCase)
     factoryOf(::ObserveDfRootUseCase)
     factoryOf(::RefreshDfRootUseCase)
     factoryOf(::RunDfRootUseCase)
